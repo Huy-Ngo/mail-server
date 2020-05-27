@@ -4,9 +4,10 @@ from flask_mail import Mail, Message
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
+app.config.from_json('config.json')
+
 api = Api(app)
 mail = Mail(app)
-
 db = SQLAlchemy(app)
 
 
