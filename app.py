@@ -14,7 +14,7 @@ db = SQLAlchemy(app)
 
 
 class MailModel(db.Model):
-    id = db.Column(db.Integer)
+    id = db.Column(db.Integer, primary_key=True)
     recipient = db.Column(db.String(254))
     message = db.Column(db.String)
 
@@ -31,7 +31,7 @@ class MailModel(db.Model):
 class MailStorage(Resource):
     def get(self):
         """Retrieve the sent mails."""
-        all_mails = db.session.query.all()
+        all_mails = db.session.query().all()
         if all_mails is None:
             return {'status': Http.NOT_FOUND}
         return {'mails': [mail.json() for mail in all_mails],
