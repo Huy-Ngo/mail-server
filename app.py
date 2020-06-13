@@ -28,6 +28,14 @@ class MailModel(db.Model):
                 'recipient': self.recipient,
                 'message': self.message}
 
+    @classmethod
+    def fetch_all(cls):
+        return cls.query.all()
+
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
+
 
 class MailStorage(Resource):
     parser = RequestParser()
@@ -36,7 +44,7 @@ class MailStorage(Resource):
 
     def get(self):
         """Retrieve the sent mails."""
-        all_mails = db.session.query().all()
+        all_mails = MailModel.fetch_all()
         if all_mails is None:
             return {'status': Http.NOT_FOUND}
         return {'mails': [mail.json() for mail in all_mails],
@@ -50,7 +58,7 @@ class MailStorage(Resource):
         msg = Message(message, recipients=[recipient])
         mail_service.send(msg)
         sent_mail = MailModel(recipient, message)
-        db.session.add(sent_mail)
+        sent_mail.save_to_db()
         return {'mail': sent_mail.json(),
                 'status': Http.CREATED}
 
